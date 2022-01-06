@@ -1,0 +1,7 @@
+{
+    "tld": "com",
+    "api_test": "APITESTKEY",
+    "secret_test":"APITESTSECRET",
+    "apiEMA": "APIKEY",
+    "secretEMA": "APISECRET"
+}

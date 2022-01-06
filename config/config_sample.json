@@ -1,0 +1,13 @@
+{
+    "pairing":"USDT",
+    "monedasANegociar": ["DOGEUSDT"],
+    "tp":3,
+    "sl":3,
+    "ttp":2,
+    "tsl":2,
+    "enable_tsl":true,
+    "test":true,
+    "quantity":0.25,
+    "callEMAInterval": 5000,
+    "KLINE_INTERVAL": "3m"  
+}

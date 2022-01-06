@@ -1,0 +1,21 @@
+{
+  "name": "tradingbot",
+  "version": "1.0.0",
+  "description": "Proyecto creacion de un backend y una CLI para un bot de trading automático que utiza API de exchages como Binance.com",
+  "main": "bin/TradingBot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jaime Hernández , Jon Bilbao , Iker Camacho",
+  "license": "ISC",
+  "bin": {
+    "TradingBotCLI": "./bin/TradingBot.js"
+  },
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "clear": "^0.1.0",
+    "figlet": "^1.5.2",
+    "forever": "^4.0.1",
+    "yargs": "^17.3.1"
+  }
+}

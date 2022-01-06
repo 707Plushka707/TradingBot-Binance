@@ -1,0 +1,15 @@
+{
+    "pairing":"USDT",
+    "monedasANegociar": ["BTCUSDT"],
+    "tp":0.5,
+    "sl":-0.5,
+    "ttp":2,
+    "tsl":2,
+    "enable_tsl":true,
+    "test":true,
+    "quantity":0.05,
+    "callEMAInterval": 5000,
+    "KLINE_INTERVAL": "5m",
+    "porcentajeRSIBear":50,
+    "porcentajeRSIBull": 50
+}

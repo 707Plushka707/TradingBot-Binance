@@ -1,0 +1,11 @@
+# Módulos nodejs
+node_modules
+
+# Authentication keys
+auth/auth.json
+
+# Credentials email
+email_credentials/email_credentials.json
+
+# Ejecuciones 
+runs
