@@ -5,7 +5,7 @@ const Binance = require('node-binance-api');
 var exec = require('child_process').exec;
 // DECLARO DOS VARIABLES PARA BINANCE
 // Lectura y aplicacion de los parametros de autenticacion
-let auth = fs.readFileSync(__dirname +  '\\..\\auth\\auth.json');
+let auth = fs.readFileSync(__dirname +  '/../auth/auth.json');
 let  CREDS= JSON.parse(auth);
 
 let APIKEY = CREDS['api_futures' ];
@@ -49,11 +49,11 @@ var utils = {
     // La variable log es un bool que sirve para mostrar o no los output de la consola
     obtenerDetalleDeUnaEjecucionEnCurso : async function  (runID, log){
 
-        var folder = '\\..\\runs';
+        var folder = '/../runs';
 
-        var pathname = __dirname.concat(folder).concat('\\').concat(runID);
+        var pathname = __dirname.concat(folder).concat('/').concat(runID);
 
-        var statusFile = fs.readFileSync(pathname.concat('\\status.json'));
+        var statusFile = fs.readFileSync(pathname.concat('/status.json'));
         var balanceInicial = JSON.parse(statusFile).BalanceInicial;
         var monedasANegociar = JSON.parse(statusFile).monedasANegociar;
 
@@ -69,7 +69,7 @@ var utils = {
         var tradesJSON =  JSON.parse('[]');
 
         try {
-            var aperturas = fs.readFileSync(pathname.concat('\\aperturas.json'));
+            var aperturas = fs.readFileSync(pathname.concat('/aperturas.json'));
             var APERTURAS = JSON.parse(aperturas);
             
             APERTURAS.forEach(element => {
@@ -87,7 +87,7 @@ var utils = {
         }
 
         try {
-            var cierres = fs.readFileSync(pathname.concat('\\cierres.json'));
+            var cierres = fs.readFileSync(pathname.concat('/cierres.json'));
             var CIERRES = JSON.parse(cierres);
 
             CIERRES.forEach(element => {
@@ -128,8 +128,8 @@ var utils = {
     //      - Despues se muestra toda la información igual que en el caso status=0.
     mostrarDetalleEstrategia: async function (runID){
 
-        var folder = '\\..\\runs';
-        var pathname = __dirname.concat(folder).concat('\\').concat(runID);
+        var folder = '/../runs';
+        var pathname = __dirname.concat(folder).concat('/').concat(runID);
 
         // La carpeta no existe, en este caso aquí acaba el workflow
         if (!fs.existsSync(pathname)){
@@ -138,7 +138,7 @@ var utils = {
         
         } else {
             
-            var status = fs.readFileSync(pathname +  '\\status.json');
+            var status = fs.readFileSync(pathname +  '/status.json');
             var  STATUS = JSON.parse(status);
 
             if(STATUS.test == "true"){
@@ -231,8 +231,8 @@ var utils = {
     //      - Después se ejecuta el comando para parar.
     pararEstrategia: async function(runID){
 
-        var folder = '\\..\\runs';
-        var pathname = __dirname.concat(folder).concat('\\').concat(runID);
+        var folder = '/../runs';
+        var pathname = __dirname.concat(folder).concat('/').concat(runID);
 
         // La carpeta no existe, en este caso aquí acaba el workflow
         if (!fs.existsSync(pathname)){
@@ -241,7 +241,7 @@ var utils = {
         
         } else {
             
-            var status = fs.readFileSync(pathname +  '\\status.json');
+            var status = fs.readFileSync(pathname +  '/status.json');
             var  STATUS = JSON.parse(status);
 
             if (STATUS.status){
@@ -270,7 +270,7 @@ var utils = {
     //      - También muestra el resultado del comando forever list, que es una forma de comprobar que está bien integrado.
     listarEstrategias: async function (){
 
-        var folder = '\\..\\runs';
+        var folder = '/../runs';
         var pathname = __dirname.concat(folder);
 
         fs.readdir(pathname, (err, files) => {
@@ -291,7 +291,7 @@ var utils = {
     },
     // Logear lista, esta funcion se necesita por ser asyncrona
     loggearLista: async function (runs){
-        var folder = '\\..\\runs';
+        var folder = '/../runs';
         var pathname = __dirname.concat(folder);
 
         var listaEjecuciones = JSON.parse('[]');
@@ -301,7 +301,7 @@ var utils = {
 
         for(var i=1; i< runs + 1; i++){
             
-            var statusFile = fs.readFileSync(pathname.concat('\\').concat(i).concat('\\').concat('\\status.json'));
+            var statusFile = fs.readFileSync(pathname.concat('/').concat(i).concat('/').concat('/status.json'));
             var STATUS = JSON.parse(statusFile);
             
             if(STATUS.status){
@@ -335,7 +335,7 @@ var utils = {
             var red = 'REAL';
             var binance = global.binance;
         }
-        console.log('Mostrando balances en la cuenta de futuros de BIANANCE asociada.... RED: ', red );
+        console.log('Mostrando balances en la cuenta de futuros de BINANCE asociada.... RED: ', red );
         
         var futuresBalance = await binance.futuresBalance();
 
@@ -347,8 +347,8 @@ var utils = {
     },
     inicializaNuevaEstrategia: async function(argv){
 
-        var folder = '\\..\\runs';
-        var runID = '\\1';
+        var folder = '/../runs';
+        var runID = '/1';
         var pathname = __dirname.concat(folder);
 
         if(argv.test){
@@ -376,7 +376,7 @@ var utils = {
             pathname = __dirname.concat(folder).concat(runID);
             
             fs.mkdirSync(pathname, { recursive: true });
-            console.log("\Lanzando la estrategia :" +  runID.replace('\\', ''));
+            console.log("\Lanzando la estrategia :" +  runID.replace('/', ''));
             uidRun = 'p001';
 
             argv.uidRun = uidRun;
@@ -392,7 +392,7 @@ var utils = {
                 else {
                     runID = (files.length +1 );
                     console.log("\Lanzando la estrategia :" +  runID);
-                    pathname = __dirname.concat(folder).concat('\\' + runID);
+                    pathname = __dirname.concat(folder).concat('/' + runID);
                     fs.mkdirSync(pathname, { recursive: true });
 
                     var uidRun = 'p';
@@ -442,7 +442,7 @@ var utils = {
         };
 
         // Escritura del fichero de status de la estrategia en curso 
-        fs.writeFileSync(pathname.concat('\\status.json'), JSON.stringify(status) );
+        fs.writeFileSync(pathname.concat('/status.json'), JSON.stringify(status) );
 
     },
     // Esta función ejecuta el comando forever con un UID de ejecución de estrategia concreto para luego poder matarlo e identificarlo

@@ -12,7 +12,7 @@
     "TradingBotCLI": "./bin/TradingBot.js"
   },
   "dependencies": {
-    "chalk": "^5.0.0",
+    "chalk": "2.4.1",
     "clear": "^0.1.0",
     "figlet": "^1.5.2",
     "forever": "^4.0.1",

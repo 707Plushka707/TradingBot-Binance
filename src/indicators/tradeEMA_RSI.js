@@ -8,16 +8,16 @@ const RSI = require('technicalindicators').RSI;
 const trader= require("../trader.js");
 
 // Ejecuta la última estrategia creada en runs
-var folder = '\\..\\..\\runs';
+var folder = '/../../runs';
 var files = fs.readdirSync(__dirname.concat(folder));  
 
 var runID = files.length;
-pathname = __dirname.concat(folder).concat('\\').concat(runID);
+pathname = __dirname.concat(folder).concat('/').concat(runID);
 
 global.pathname = pathname;
 
 // Lectura y aplicacion de los parámetros de configuracion
-let config = fs.readFileSync(pathname.concat('\\').concat('status.json'));
+let config = fs.readFileSync(pathname.concat('/').concat('status.json'));
 let  CONFIG= JSON.parse(config);
 let pairing = CONFIG.pairing;
 let tp = CONFIG.tp;
@@ -34,7 +34,7 @@ let porcentajeRSIBear = CONFIG.porcentajeRSIBear
 let porcentajeRSIBull = CONFIG.porcentajeRSIBull
 
 // Lectura y aplicacion de los parametros de autenticacion
-let auth = fs.readFileSync(__dirname +  '\\..\\..\\auth\\auth.json');
+let auth = fs.readFileSync(__dirname +  '/../../auth/auth.json');
 let  CREDS= JSON.parse(auth);
 
 var add = '';
@@ -57,7 +57,7 @@ global.binance = binance;
 // trader.binance = binance
 
 // Lecturad de los datos del correo electrónico
-let emailConfig = fs.readFileSync(__dirname +  '\\..\\..\\email_credentials\\email_credentials.json');
+let emailConfig = fs.readFileSync(__dirname +  '/../../email_credentials/email_credentials.json');
 let EMAILCONFIG= JSON.parse(emailConfig);
 let EMAIL= EMAILCONFIG.email;
 let EMAILPASSWORD = EMAILCONFIG.password;
@@ -203,13 +203,13 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
 
             // Esta variable writeJsonFromPreviousOpen sirve para saber si hay que parsear las aperturas del fichero previo o crear el fichero desde 0.
             if (global.writeJsonFromPreviousOpen) {
-                APERTURAS = fs.readFileSync(global.pathname.concat('\\aperturas.json'));
+                APERTURAS = fs.readFileSync(global.pathname.concat('/aperturas.json'));
                 aperturas= JSON.parse(APERTURAS);
             } else {
                 aperturas = JSON.parse('[]');
             }
             aperturas.push(orden);
-            fs.writeFileSync(global.pathname.concat('\\aperturas.json'), JSON.stringify(aperturas) );
+            fs.writeFileSync(global.pathname.concat('/aperturas.json'), JSON.stringify(aperturas) );
             // Es el campo executedQty para Spot y el origQty para futuros cuando abres la posicion
             // global.amount = parseFloat(orden.executedQty); // Spot
             global.amount = parseFloat(orden.origQty);          // Futuros
@@ -227,13 +227,13 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
 
             // Esta variable writeJsonFromPreviousOpen sirve para saber si hay que parsear las aperturas del fichero previo o crear el fichero desde 0.
             if (global.writeJsonFromPreviousOpen) {
-                APERTURAS = fs.readFileSync(global.pathname.concat('\\aperturas.json'));
+                APERTURAS = fs.readFileSync(global.pathname.concat('/aperturas.json'));
                 aperturas= JSON.parse(APERTURAS);
             } else {
                 aperturas = JSON.parse('[]');
             }
             aperturas.push(orden);
-            fs.writeFileSync(global.pathname.concat('\\aperturas.json'), JSON.stringify(aperturas) );
+            fs.writeFileSync(global.pathname.concat('/aperturas.json'), JSON.stringify(aperturas) );
             // Es el campo executedQty para Spot y el origQty para futuros cuando abres la posicion
             // global.amount = parseFloat(orden.executedQty); // Spot
             global.amount = parseFloat(orden.origQty);          // Futuros
@@ -260,13 +260,13 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
             var orden = await trader.sell_future(monedasANegociar,   precioActual, global.amount);
             
             if (global.writeJsonFromPreviousOpen) {
-                CIERRES = fs.readFileSync(global.pathname.concat('\\cierres.json'));
+                CIERRES = fs.readFileSync(global.pathname.concat('/cierres.json'));
                 cierres = JSON.parse(CIERRES);
             } else {
                 cierres = JSON.parse('[]');
             }
             cierres.push(orden);
-            fs.writeFileSync(global.pathname.concat('\\cierres.json'), JSON.stringify(cierres) );
+            fs.writeFileSync(global.pathname.concat('/cierres.json'), JSON.stringify(cierres) );
             
             global.writeJsonFromPreviousOpen = true;
             global.deshacerPosicion = false;
@@ -284,13 +284,13 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
             var orden = await trader.buy_future(monedasANegociar,   precioActual, global.amount);
             
             if (global.writeJsonFromPreviousOpen) {
-                CIERRES = fs.readFileSync(global.pathname.concat('\\cierres.json'));
+                CIERRES = fs.readFileSync(global.pathname.concat('/cierres.json'));
                 cierres = JSON.parse(CIERRES);
             } else {
                 cierres = JSON.parse('[]');
             }
             cierres.push(orden);
-            fs.writeFileSync(global.pathname.concat('\\cierres.json'), JSON.stringify(cierres) );
+            fs.writeFileSync(global.pathname.concat('/cierres.json'), JSON.stringify(cierres) );
             
             global.writeJsonFromPreviousOpen = true;
             global.deshacerPosicion = false;

@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
 const clear = require('clear');
+// chalk ha de estar en la version 2.4.1
 const chalk = require('chalk');
 const figlet = require('figlet');
-var exec = require('child_process').exec;
 const yargs = require("yargs");
 const utils = require("../src/utils.js");
-var forever = require('forever');
 
 clear();
 
