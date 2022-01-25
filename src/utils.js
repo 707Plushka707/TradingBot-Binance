@@ -63,25 +63,28 @@ var utils = {
         var modoPrueba = JSON.parse(statusFile).test;
         
         var binance = global.binance;
-        if (modoPrueba) binance = global.binanceTest;
+        
+        if (modoPrueba) {
+            binance = global.binanceTest;
+        }
 
         var trades = await binance.futuresUserTrades(monedasANegociar[0]);
         var tradesJSON =  JSON.parse('[]');
 
         try {
+            
             var aperturas = fs.readFileSync(pathname.concat('/aperturas.json'));
             var APERTURAS = JSON.parse(aperturas);
-            
+
             APERTURAS.forEach(element => {
                 var trade = trades.filter(function(s) {
                     return s.orderId === element.orderId
                 });
                 tradesJSON.push(trade);
                 sumaComisiones  = sumaComisiones + parseFloat(trade[0].commission);
-
             });
         } catch(error){
-            if(log){
+            if(!log){
                 console.log('No se ha producido ninguna apertura');
             }
         }
@@ -141,7 +144,7 @@ var utils = {
             var status = fs.readFileSync(pathname +  '/status.json');
             var  STATUS = JSON.parse(status);
 
-            if(STATUS.test == "true"){
+            if(STATUS.test){
                 var red = 'TESTNET';
             } else {
                 var red = 'REAL';
@@ -158,7 +161,7 @@ var utils = {
                 console.log("TIPO DE ESTRATEGIA --> ", STATUS.tipoEstrategia);
                 console.log('PERIODO DE PRUEBAS : ', STATUS.FECHA_HORA_INICIO, ' --> Running Ahora');
                 console.log('BALANCE INICIAL: ', STATUS.BalanceInicial);
-                console.log('RENTABILIDAD: ', datosActuales.Rentabilidad);
+                console.log('RENTABILIDAD: ', datosActuales.Rentabilidad * 100 ,  ' %');
                 console.log('VARIACION MONETARIA: ', datosActuales.VariacionMonetaria, ' USDT' );
                 console.log('\n');
                 console.log('PARAMETROS CONFIGURABLES: ');
@@ -175,10 +178,13 @@ var utils = {
                 console.log('RSI Limite Mercado Bajista: ', STATUS.porcentajeRSIBear);
                 console.log('RSI Limite Mercado Alcista: ', STATUS.porcentajeRSIBull);
                 console.log('\n');
-                if( STATUS.trades.length > 0){
+                
+                if(datosActuales.trades.length > 0){
                     console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
                     console.log('\n');
-                    console.table(STATUS.trades);
+                    datosActuales.trades.forEach(element => {
+                        console.table(element);
+                    });
                 } else {
                     console.log('LA EJECUCION AUN NO HA HECHO NINGUNA OPERACION');
                 }
@@ -193,7 +199,7 @@ var utils = {
                 console.log("TIPO DE ESTRATEGIA --> ", STATUS.tipoEstrategia);
                 console.log('PERIODO DE PRUEBAS : ', STATUS.FECHA_HORA_INICIO, ' --> ', STATUS.FECHA_HORA_FIN);
                 console.log('BALANCE INICIAL: ', STATUS.BalanceInicial);
-                console.log('RENTABILIDAD: ', STATUS.Rentabilidad);
+                console.log('RENTABILIDAD: ', STATUS.Rentabilidad *100 , ' %');
                 console.log('VARIACION MONETARIA: ', STATUS.VariacionMonetaria, ' USDT' );
                 console.log('\n');
                 console.log('PARAMETROS CONFIGURABLES: ');
@@ -210,11 +216,14 @@ var utils = {
                 console.log('RSI Limite Mercado Bajista: ', STATUS.porcentajeRSIBear);
                 console.log('RSI Limite Mercado Alcista: ', STATUS.porcentajeRSIBull);
                 console.log('\n');
-                
+
                 if( STATUS.trades.length > 0){
                     console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
                     console.log('\n');
-                    console.table(STATUS.trades);
+                    STATUS.trades.forEach(element => {
+                        console.table(element);
+                    });
+                    
                 } else {
                     console.log('LA EJECUCION AUN NO HA HECHO NINGUNA OPERACION');
                 }
@@ -297,19 +306,23 @@ var utils = {
         var listaEjecuciones = JSON.parse('[]');
 
         var rentabilidad = 0;
+        var VariacionMonetaria = 0;
         var estado = '';
 
         for(var i=1; i< runs + 1; i++){
             
+            // Aquí hay que validar que la carpeta runs existe para listar las estrategias y sino dar un error
             var statusFile = fs.readFileSync(pathname.concat('/').concat(i).concat('/').concat('/status.json'));
             var STATUS = JSON.parse(statusFile);
             
             if(STATUS.status){
                 var datosActuales = await this.obtenerDetalleDeUnaEjecucionEnCurso(i, false);
                 rentabilidad = datosActuales.Rentabilidad;
+                VariacionMonetaria = datosActuales.VariacionMonetaria;
                 estado = 'RUNNING'; 
             } else {
                 rentabilidad = STATUS.Rentabilidad;
+                VariacionMonetaria = STATUS.VariacionMonetaria;
                 estado = 'PARADA'
             }
 
@@ -317,9 +330,9 @@ var utils = {
                 'ID': STATUS.IdEstrategia,
                 'FECHA_HORA_INICIO': STATUS.FECHA_HORA_INICIO,
                 'FECHA_HORA_FIN': STATUS.FECHA_HORA_FIN,
-                'Variacion Monetaria': STATUS.VariacionMonetaria,
+                'Variacion Monetaria': VariacionMonetaria,
                 'TIPO Estrategia': STATUS.tipoEstrategia,
-                '% RENTABILIDAD': rentabilidad,
+                '% RENTABILIDAD': rentabilidad * 100,
                 'STATUS': estado
             };
             listaEjecuciones.push(datosListado);
@@ -353,8 +366,10 @@ var utils = {
 
         if(argv.test){
             var binance = global.binanceTest;
+            argv.test = true;
         } else {
             var binance = global.binance;
+            argv.test = false;
         }
 
         var futuresBalance = await binance.futuresBalance();
@@ -377,7 +392,7 @@ var utils = {
             
             fs.mkdirSync(pathname, { recursive: true });
             console.log("\Lanzando la estrategia :" +  runID.replace('/', ''));
-            uidRun = 'p001';
+            var uidRun = 'p001';
 
             argv.uidRun = uidRun;
             
@@ -450,7 +465,7 @@ var utils = {
 
         console.log('Lanzando proceso: ', uid);
 
-        exec('forever start -a --uid ' + uid + ' src/indicators/tradeEMA_RSI.js', (error, stdout, stderr) => {
+        exec('forever start -a --uid ' + uid + '  src/indicators/tradeEMA_RSI.js', (error, stdout, stderr) => {
             // exec('node C:/Users/jaime.hernandez/Desktop/Crypto/Binance/TradingBot/src/indicators/tradeEMA_RSI.js', (error, stdout, stderr) => {    
             if (error) {
             console.error(`error: ${error.message}`);

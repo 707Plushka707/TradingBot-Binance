@@ -22,7 +22,7 @@ const options = yargs
     //      - Crear el fichero status.json con la configuración indicada. 
     //      - Mostrar el output 
     .command(['launch', 'run', 'up'], 'Crea una nueva ejecución de una estrategias con parámetros concretos', 
-        (yargs) => yargs.default('test', 'true', 'Red Real - TESTNET').default("pairing","USDT").default("monedasANegociar", ["BTCUSDT"]).default('tp', 0.5).default('sl',-0.5)
+        (yargs) => yargs.default('test', 1).default("pairing","USDT").default("monedasANegociar", ["BTCUSDT"]).default('tp', 0.5).default('sl',-0.5)
         .default('enable_tsl',false).default("ttp",2).default("tsl",2).default("quantity",0.05).default("callEMAInterval", 5000).default("KLINE_INTERVAL", "5m")
         .default("porcentajeRSIBear",50).default("porcentajeRSIBull", 50),
         (argv) => {
