@@ -165,17 +165,17 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
     // cantidadANegociar = Math.round(quantity * balances[pairing].available);
     cantidadANegociar = Math.round(quantity * balanceUSDT.availableBalance);
 
-    console.log("Balance USDT: ", balanceUSDT.availableBalance);
-    console.log("Cantidad a negociar: ", cantidadANegociar, " ", pairing);
+    // console.log("Balance USDT: ", balanceUSDT.availableBalance);
+    // console.log("Cantidad a negociar: ", cantidadANegociar, " ", pairing);
     // for (i = 0;  i < monedasANegociar; i ++) {  
     EMAs = await checkEMAs(monedasANegociar, KLINE_INTERVAL);
 
     lastEMA3 = EMAs[0][EMAs[0].length -1]
     lastEMA6 = EMAs[1][EMAs[1].length -1]
     lastEMA9 = EMAs[2][EMAs[2].length -1]
-    console.log("EMA 3 periodos: ", lastEMA3);
-    console.log("EMA 6 periodos: ", lastEMA6);
-    console.log("EMA 9 periodos: ", lastEMA9);
+    // console.log("EMA 3 periodos: ", lastEMA3);
+    // console.log("EMA 6 periodos: ", lastEMA6);
+    // console.log("EMA 9 periodos: ", lastEMA9);
 
     //  Crear la variable precioInicial, en productivo tiene que ser la respuesta de la compra de la api 
     precio = await comprobarPrecio(monedasANegociar);
@@ -188,9 +188,9 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
     RSIs = await checkRSI(monedasANegociar, KLINE_INTERVAL);
     lastRSI = RSIs[[RSIs.length -1]]
 
-    console.log("RSI 7 periodos: ", lastRSI);
+    // console.log("RSI 7 periodos: ", lastRSI);
 
-    console.log("Precio actual: ", precio, ". Monedas: ", monedasANegociar);
+    // console.log("Precio actual: ", precio, ". Monedas: ", monedasANegociar);
     
     // BLOQUE 1
     if( (lastEMA3 >lastEMA6 & lastEMA3 > lastEMA9 & !global.deshacerPosicion & lastRSI < porcentajeRSIBull)  ){
@@ -242,7 +242,7 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
             global.side = 'BEAR';
         
     } else {
-        console.log("No se dan condiciones de compra venta (EMA3: ", lastEMA3, ", EMA6: ", lastEMA6, ", EMA9: " , lastEMA9 , "), RSI (7) : ", lastRSI, " %");
+        // console.log("No se dan condiciones de compra venta (EMA3: ", lastEMA3, ", EMA6: ", lastEMA6, ", EMA9: " , lastEMA9 , "), RSI (7) : ", lastRSI, " %");
     }
     // TODO:
     // Configurar logica TP y SL, trailing, orden fija? Utilizamos un json o variables en memoria? Que es más rápido?
