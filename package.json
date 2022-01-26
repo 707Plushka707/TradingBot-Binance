@@ -18,6 +18,7 @@
     "forever": "^4.0.1",
     "yargs": "^17.3.1",
     "nodemailer": "6.6.2",
-    "technicalindicators":"3.1.0"
+    "technicalindicators":"3.1.0",
+    "node-binance-api":"0.13.0"
   }
 }
