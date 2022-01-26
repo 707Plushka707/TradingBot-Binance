@@ -84,7 +84,7 @@ var utils = {
                 sumaComisiones  = sumaComisiones + parseFloat(trade[0].commission);
             });
         } catch(error){
-            if(!log){
+            if(log){
                 console.log('No se ha producido ninguna apertura');
             }
         }
