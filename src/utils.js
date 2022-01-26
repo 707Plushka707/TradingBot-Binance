@@ -282,21 +282,28 @@ var utils = {
         var folder = '/../runs';
         var pathname = __dirname.concat(folder);
 
-        fs.readdir(pathname, (err, files) => {
-            if (err)
-                console.log(err);
-            else {
-                var runs = (files.length);
-                
-                if(runs > 0){
-                    console.log('Hay un total de ', runs, ' estrategias en el sistema.')
-                    utils.loggearLista(runs);
+        if (!fs.existsSync(pathname)){
 
-                } else {
-                    console.log('Aun no hay ninguna estrategia en el sistema.')
+            console.log('No hay estrategias paradas ni en ejecución actualmente.');
+        
+        } else {
+
+            fs.readdir(pathname, (err, files) => {
+                if (err)
+                    console.log(err);
+                else {
+                    var runs = (files.length);
+                    
+                    if(runs > 0){
+                        console.log('Hay un total de ', runs, ' estrategias en el sistema.')
+                        utils.loggearLista(runs);
+
+                    } else {
+                        console.log('Aun no hay ninguna estrategia en el sistema.')
+                    }
                 }
-            }
-          })
+            })
+        }
     },
     // Logear lista, esta funcion se necesita por ser asyncrona
     loggearLista: async function (runs){
