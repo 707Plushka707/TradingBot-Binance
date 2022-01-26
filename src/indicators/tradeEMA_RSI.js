@@ -255,7 +255,7 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
         // Variable que comprueba el movimiento relativo == Ganancia o Pérdida (precioActual - precioApertura)/ precioApertura
         diferencia = (precioActual - precioApertura) / precioApertura;
 
-        if ((tp/100) <= diferencia || (sl/100) >= diferencia ) {
+        if ((tp/100) <= diferencia || (-sl/100) >= diferencia ) {
             
             var orden = await trader.sell_future(monedasANegociar,   precioActual, global.amount);
             
@@ -279,7 +279,7 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
         // Variable que comprueba el movimiento relativo == Ganancia o Pérdida (precioActual - precioApertura)/ precioApertura
         diferencia = (precioApertura - precioActual) / precioApertura;
 
-        if ((tp/100) <= diferencia || (sl/100) >= diferencia ) {
+        if ((tp/100) <= diferencia || (-sl/100) >= diferencia ) {
             
             var orden = await trader.buy_future(monedasANegociar,   precioActual, global.amount);
             
