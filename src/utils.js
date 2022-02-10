@@ -526,6 +526,12 @@ var utils = {
                 estado = 'PARADA'
             }
 
+            if(STATUS.test){
+                var red = 'TESTNET';
+            } else {
+                var red = 'REAL';
+            }
+
             var datosListado = {
                 'ID': STATUS.IdEstrategia,
                 'FECHA_HORA_INICIO': STATUS.FECHA_HORA_INICIO,
@@ -533,7 +539,8 @@ var utils = {
                 'Variacion Monetaria': VariacionMonetaria,
                 'TIPO Estrategia': STATUS.tipoEstrategia,
                 '% RENTABILIDAD': rentabilidad * 100,
-                'STATUS': estado
+                'STATUS': estado,
+                'RED': red
             };
             listaEjecuciones.push(datosListado);
         }
