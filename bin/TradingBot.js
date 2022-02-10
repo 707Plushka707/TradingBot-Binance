@@ -86,7 +86,7 @@ const options = yargs
                         '\ncolaborar con más usuarios, a los que se está pensando solicitar un ingreso mínimo\n\n' + 
                         'También se ha pensado que una forma más moderna y actual de invertir podría ser la posesión de un NFT de una serie que se creará a futuro ' + 
                         '\ny que podría constar hasta de 10.000 NFT únicos y distintos que se venderán en OpenSea. \n\n' + 
-                        'Algunas ideas... @coolinvestors')
+                        'Algunas ideas... @psychoCatClub')
         }
     })
     // .option("help", { alias: "help", describe: "Muestra ayuda sobre un comando en específico", type: "string"})
