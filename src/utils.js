@@ -129,7 +129,15 @@ var utils = {
     //      - Primero lee el fichero status.json y comprueba el status de una estrategia, si el status = 0 directamente muestra la información del fichero
     //      - Si el status es 1 se llama a la fucnion de obtenerDetalleDeUnaEjecucionEnCurso
     //      - Despues se muestra toda la información igual que en el caso status=0.
-    mostrarDetalleEstrategia: async function (runID){
+    mostrarDetalleEstrategia: async function (runID, top_worst=0, top_worst_num=0){
+
+        function aPares(arr, func){
+            for(var i=0; i < arr.length - 1; i++){
+                func(arr[i], arr[i + 1])
+                arr.shift();
+                // arr.shift();
+            }
+        }
 
         var folder = '/../runs';
         var pathname = __dirname.concat(folder).concat('/').concat(runID);
@@ -180,11 +188,83 @@ var utils = {
                 console.log('\n');
                 
                 if(datosActuales.trades.length > 0){
-                    console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
-                    console.log('\n');
                     datosActuales.trades.forEach(element => {
-                        console.table(element);
+                        element[0].date = new Date(element[0].time);
                     });
+
+                    // mostrar todas las operaciones por aprejas de apertura/cierre
+                    if (top_worst == 0){
+                        console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
+                        console.log('\n');
+
+
+                        //ordeno las operaciones por timestamp
+                        datosActuales.trades.sort(function(x, y){
+                            return x[0].time - y[0].time;
+                        })
+                        var operaciones_en_parejas = datosActuales.trades
+                        aPares(operaciones_en_parejas, function(current, next){
+                            console.table([current[0], next[0]])
+                        })
+
+                    }
+                    // mostrar las mejores operaciones por aprejas de apertura/cierre
+                    else if (top_worst == 1)
+                    {
+                        //ordeno las operaciones de mejor a peor resultado
+                        datosActuales.trades.sort(function(x, y){
+                            return y[0].realizedPnl - x[0].realizedPnl;
+                        })
+                        var top_ids = [];
+                        var count_ids = 0;
+                        datosActuales.trades.forEach(element => {
+                            if (count_ids < top_worst_num)
+                            {
+                                top_ids.push(element[0].id);
+                                count_ids ++;
+                            }
+                        });
+                        //ordeno las operaciones por timestamp
+                        datosActuales.trades.sort(function(x, y){
+                            return x[0].time - y[0].time;
+                        })
+                        var operaciones_en_parejas = datosActuales.trades
+                        aPares(operaciones_en_parejas, function(current, next){
+                            if (top_ids.includes(current[0].id) | top_ids.includes(next[0].id))
+                            {
+                                console.table([current[0], next[0]])
+                            }
+                        })
+
+                    }
+                    // mostrar las peores operaciones por aprejas de apertura/cierre
+                    else if (top_worst == 2)
+                    {
+                        //ordeno las operaciones de peor a mejor resultado
+                        datosActuales.trades.sort(function(x, y){
+                            return x[0].realizedPnl - y[0].realizedPnl;
+                        })
+                        var top_ids = [];
+                        var count_ids = 0;
+                        datosActuales.trades.forEach(element => {
+                            if (count_ids < top_worst_num)
+                            {
+                                top_ids.push(element[0].id);
+                                count_ids ++;
+                            }
+                        });
+                        //ordeno las operaciones por timestamp
+                        datosActuales.trades.sort(function(x, y){
+                            return x[0].time - y[0].time;
+                        })
+                        var operaciones_en_parejas = datosActuales.trades
+                        aPares(operaciones_en_parejas, function(current, next){
+                            if (top_ids.includes(current[0].id) | top_ids.includes(next[0].id))
+                            {
+                                console.table([current[0], next[0]])
+                            }
+                        })
+                    }
                 } else {
                     console.log('LA EJECUCION AUN NO HA HECHO NINGUNA OPERACION');
                 }
@@ -218,33 +298,84 @@ var utils = {
                 console.log('\n');
 
                 if( STATUS.trades.length > 0){
-                    console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
-                    console.log('\n');
+                    STATUS.trades.forEach(element => {
+                        element[0].date = new Date(element[0].time);
+                    });
+                    // mostrar todas las operaciones por aprejas de apertura/cierre
+                    if (top_worst == 0){
+                        console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
+                        console.log('\n');
 
-                    //ordeno las operaciones por timestamp
-                    STATUS.trades.sort(function(x, y){
-                        return x[0].time - y[0].time;
-                    })
-                    // STATUS.trades.forEach(element => {
-                    //     element[0].date = new Date(element[0].time)
-                    //     console.log(element[0].buyer, element[0].date)
-                    // });
-                    // STATUS.trades.forEach(element => {
-                    //     console.table(element);
-                    // });
-                    // console.log("-------0-------")
-                    function aPares(arr, func){
-                        for(var i=0; i < arr.length - 1; i++){
-                            func(arr[i], arr[i + 1])
-                            arr.shift();
-                            // arr.shift();
-                        }
+                        //ordeno las operaciones por timestamp
+                        STATUS.trades.sort(function(x, y){
+                            return x[0].time - y[0].time;
+                        })
+                        var operaciones_en_parejas = STATUS.trades
+                        aPares(operaciones_en_parejas, function(current, next){
+                            console.table([current[0], next[0]])
+                        })
+
                     }
-                    var operaciones_en_parejas = STATUS.trades
-                    aPares(operaciones_en_parejas, function(current, next){
-                        console.table([current[0], next[0]])
-                    })
+                    // mostrar las mejores operaciones por aprejas de apertura/cierre
+                    else if (top_worst == 1)
+                    {
+                        //ordeno las operaciones de mejor a peor resultado
+                        STATUS.trades.sort(function(x, y){
+                            return y[0].realizedPnl - x[0].realizedPnl;
+                        })
 
+                        var top_ids = [];
+                        var count_ids = 0;
+                        STATUS.trades.forEach(element => {
+                            if (count_ids < top_worst_num)
+                            {
+                                top_ids.push(element[0].id);
+                                count_ids ++;
+                            }
+                        });
+                        //ordeno las operaciones por timestamp
+                        STATUS.trades.sort(function(x, y){
+                            return x[0].time - y[0].time;
+                        })
+                        var operaciones_en_parejas = STATUS.trades
+                        aPares(operaciones_en_parejas, function(current, next){
+                            if (top_ids.includes(current[0].id) | top_ids.includes(next[0].id))
+                            {
+                                console.table([current[0], next[0]])
+                            }
+                        })
+
+                    }
+                    // mostrar las peores operaciones por aprejas de apertura/cierre
+                    else if (top_worst == 2)
+                    {
+                        //ordeno las operaciones de peor a mejor resultado
+                        STATUS.trades.sort(function(x, y){
+                            return x[0].realizedPnl - y[0].realizedPnl;
+                        })
+
+                        var top_ids = [];
+                        var count_ids = 0;
+                        STATUS.trades.forEach(element => {
+                            if (count_ids < top_worst_num)
+                            {
+                                top_ids.push(element[0].id);
+                                count_ids ++;
+                            }
+                        });
+                        //ordeno las operaciones por timestamp
+                        STATUS.trades.sort(function(x, y){
+                            return x[0].time - y[0].time;
+                        })
+                        var operaciones_en_parejas = STATUS.trades
+                        aPares(operaciones_en_parejas, function(current, next){
+                            if (top_ids.includes(current[0].id) | top_ids.includes(next[0].id))
+                            {
+                                console.table([current[0], next[0]])
+                            }
+                        })
+
+                    }
 
                 } else {
                     console.log('LA EJECUCION AUN NO HA HECHO NINGUNA OPERACION');

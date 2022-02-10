@@ -50,12 +50,40 @@ const options = yargs
     //      - Calcular la rentabilidad indicada en el id
     .command({
         command: 'show <id>',
+        builder: {
+            top_worst:                       // second argument
+                {
+                    describe: '(OPCIONAL) mostrar las mejores o peores estrategias',      // description
+                    demandOption: false,         // optional param or not
+                    type: 'string'              // param type
+                },
+            top_wors_num:                       // 3er argument
+                {
+                    describe: '(OPCIONAL) Numero de mejores/peores estrategias a mostrar',      // description
+                    demandOption: false,         // optional param or not
+                    type: 'integer'              // param type
+                }
+        },
         aliases: ['show', 'sh'],
         desc: 'Muestra información con detalle de una ejecución concreta de una estrategia (id)',
         handler: (argv) => {
             // Llamar al fichero de status.json, aperturas.json y cierres.json para ver el detalle, también mostrar la rentabilidad.
-            console.log(`Mostrando información detallada de la ejecución número ${argv.id}`)
-            utils.mostrarDetalleEstrategia(argv.id);
+            if (argv._[1] == 'top')
+            {
+                console.log(`Mostrando información detallada de las ${argv._[2]} mejores ejecuciones de la estrategia número ${argv.id}`)
+                utils.mostrarDetalleEstrategia(argv.id, 1, argv._[2]);
+            }
+            else if (argv._[1] == 'worst')
+            {
+                console.log(`Mostrando información detallada de las ${argv._[2]} peores ejecuciones de la estrategia número ${argv.id}`)
+                utils.mostrarDetalleEstrategia(argv.id, 2, argv._[2]);
+
+            }
+            else
+            {
+                console.log(`Mostrando información detallada de la ejecución número ${argv.id}`)
+                utils.mostrarDetalleEstrategia(argv.id);
+            }
         }
     })
     .command({
