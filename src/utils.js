@@ -220,15 +220,37 @@ var utils = {
                 if( STATUS.trades.length > 0){
                     console.log('OPERACIONES PRODUCIDAS DURANTE LA EJECUCION: ');
                     console.log('\n');
-                    STATUS.trades.forEach(element => {
-                        console.table(element);
-                    });
-                    
+
+                    //ordeno las operaciones por timestamp
+                    STATUS.trades.sort(function(x, y){
+                        return x[0].time - y[0].time;
+                    })
+                    // STATUS.trades.forEach(element => {
+                    //     element[0].date = new Date(element[0].time)
+                    //     console.log(element[0].buyer, element[0].date)
+                    // });
+                    // STATUS.trades.forEach(element => {
+                    //     console.table(element);
+                    // });
+                    // console.log("-------0-------")
+                    function aPares(arr, func){
+                        for(var i=0; i < arr.length - 1; i++){
+                            func(arr[i], arr[i + 1])
+                            arr.shift();
+                            // arr.shift();
+                        }
+                    }
+                    var operaciones_en_parejas = STATUS.trades
+                    aPares(operaciones_en_parejas, function(current, next){
+                        console.table([current[0], next[0]])
+                    })
+
+
                 } else {
                     console.log('LA EJECUCION AUN NO HA HECHO NINGUNA OPERACION');
                 }
             }
-        } 
+        }
 
     },
     // Esta función ejecuta el siguiente workflow para para una estrategia:
