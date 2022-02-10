@@ -41,20 +41,46 @@ var add = '';
 if(test) add = '_testnet' 
 let APIKEY = CREDS['api_futures' + add];
 let APISECRET = CREDS['secret_futures' + add];
-const Binance = require('node-binance-api' + add.replace('_','-'));
 
+// Cambios para no tener que importar "a mano" el módulo con las url de la testnet.
+// Se declaran las url en funcion de la red Testnet true false.
+let fapi = CREDS['fapi' + add];
+let dapi = CREDS['dapi' + add];
+
+// Require del módulo npm de Binance 
+const Binance = require('node-binance-api');
+
+// Declaración de la clase Binance con las url y APIKEY y SECRET correctas.
 const binance = new Binance().options({
     APIKEY: APIKEY,
     APISECRET: APISECRET,
     useServerTime: true,
     recvWindow: 60000, // Set a higher recvWindow to increase response timeout
     verbose: true, // Add extra output when subscribing to WebSockets, etc
+    urls:{
+        fapi: fapi,
+        dapi: dapi,
+        base : 'https://api.binance.com/api/',
+        wapi : 'https://api.binance.com/wapi/',
+        sapi : 'https://api.binance.com/sapi/',
+        fapiTest : 'https://testnet.binancefuture.com/fapi/',
+        dapiTest : 'https://testnet.binancefuture.com/dapi/',
+        fstream : 'wss://fstream.binance.com/stream?streams=',
+        fstreamSingle : 'wss://fstream.binance.com/ws/',
+        fstreamSingleTest : 'wss://stream.binancefuture.com/ws/',
+        fstreamTest : 'wss://stream.binancefuture.com/stream?streams=',
+        dstream : 'wss://dstream.binance.com/stream?streams=',
+        dstreamSingle : 'wss://dstream.binance.com/ws/',
+        dstreamSingleTest : 'wss://dstream.binancefuture.com/ws/',
+        dstreamTest : 'wss://dstream.binancefuture.com/stream?streams=',
+        stream : 'wss://stream.binance.com:9443/ws/',
+        combineStream :'wss://stream.binance.com:9443/stream?streams='
+    },
     log: log => {
         console.log(log); // You can create your own logger here, or disable console output
     }
   });
 global.binance = binance;
-// trader.binance = binance
 
 // Lecturad de los datos del correo electrónico
 let emailConfig = fs.readFileSync(__dirname +  '/../../email_credentials/email_credentials.json');
@@ -62,7 +88,6 @@ let EMAILCONFIG= JSON.parse(emailConfig);
 let EMAIL= EMAILCONFIG.email;
 let EMAILPASSWORD = EMAILCONFIG.password;
 let EMAILTARGETS = EMAILCONFIG.targets;
-let haComprado = false;
 
 // Modulo de transportes de emails
 let transporter = nodemailer.createTransport({
@@ -149,7 +174,6 @@ async function calcularAmount(cantidadANegociar, monedasANegociar, precio){
 }
 
 // Calculo de la cantidad a invertir en función del balance
-// getBalance(quantity, pairing)
 async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTERVAL) {
     // balances = await binance.balance();  
     futuresBalance = await binance.futuresBalance();
@@ -157,33 +181,24 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
         return s.asset === 'USDT'
       });
     balanceUSDT = balanceUSDT.reduce(x => x[0]);
-    //=> {
-    //     if ( error ) return console.error(error);
-    //     console.info("balances()", balances);
-    //     console.info("USDT balance: ", balances[pairing].available);
-    //     return Math.round(quantity * balances[pairing].available);
-    // cantidadANegociar = Math.round(quantity * balances[pairing].available);
+
     cantidadANegociar = Math.round(quantity * balanceUSDT.availableBalance);
 
-    // console.log("Balance USDT: ", balanceUSDT.availableBalance);
-    // console.log("Cantidad a negociar: ", cantidadANegociar, " ", pairing);
-    // for (i = 0;  i < monedasANegociar; i ++) {  
+    // Obtención de las 3 EMA por períodos
     EMAs = await checkEMAs(monedasANegociar, KLINE_INTERVAL);
 
     lastEMA3 = EMAs[0][EMAs[0].length -1]
     lastEMA6 = EMAs[1][EMAs[1].length -1]
     lastEMA9 = EMAs[2][EMAs[2].length -1]
-    // console.log("EMA 3 periodos: ", lastEMA3);
-    // console.log("EMA 6 periodos: ", lastEMA6);
-    // console.log("EMA 9 periodos: ", lastEMA9);
 
-    //  Crear la variable precioInicial, en productivo tiene que ser la respuesta de la compra de la api 
+    //  Crear la variable precioInicial, en productivo tiene que ser la respuesta de la compra de la api TO DO
     precio = await comprobarPrecio(monedasANegociar);
     precio = parseFloat(precio);
     // POSIBLE FACTOR DE REFUERZO DE LA COMPRA. Meter un factor que mida la brusquedad del cruce? Pendientes? Angulo de cruce?
     // TODO: Hay que pensar si conviene meter un factor de seguridad. EJ: lastEMA3 * 1,00X > lastEMA9. 
     // También se podría mirar el RSI u otro indicador que confirme el cambio de tendencia
     // Podríoa ser buena que si el RSI está por debajo de 50% compramos 
+
     // Debajo se calcula el RSI de 7 períodos para el intervalo 3 minutos.
     RSIs = await checkRSI(monedasANegociar, KLINE_INTERVAL);
     lastRSI = RSIs[[RSIs.length -1]]
@@ -192,7 +207,7 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
 
     // console.log("Precio actual: ", precio, ". Monedas: ", monedasANegociar);
     
-    // BLOQUE 1
+    // BLOQUE 1: APERTURAS
     if( (lastEMA3 >lastEMA6 & lastEMA3 > lastEMA9 & !global.deshacerPosicion & lastRSI < porcentajeRSIBull)  ){
             console.log("La EMA de 3 períodos está por ENCIMA de la EMA de 6 y 9 períodos (EMA3: ", lastEMA3, ", EMA6: ", lastEMA6, ", EMA9: " , lastEMA9 , 
                     "), y el RSI (7) es el  ", lastRSI, " %");
@@ -247,7 +262,7 @@ async function bloquePrincipal (quantity, pairing, monedasANegociar ,KLINE_INTER
     // TODO:
     // Configurar logica TP y SL, trailing, orden fija? Utilizamos un json o variables en memoria? Que es más rápido?
     
-    // BLOQUE 2
+    // BLOQUE 2: CIERRES
     if (global.deshacerPosicion & global.side == 'BULL'){
         precioApertura = global.precioApertura;
         precioActual = await comprobarPrecio (monedasANegociar);

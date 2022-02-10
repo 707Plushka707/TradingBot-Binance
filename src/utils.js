@@ -10,7 +10,8 @@ let  CREDS= JSON.parse(auth);
 
 let APIKEY = CREDS['api_futures' ];
 let APISECRET = CREDS['secret_futures' ];
-
+let fapi = CREDS['fapi'];
+let dapi = CREDS['dapi'];
 
 const binance = new Binance().options({
     APIKEY: APIKEY,
@@ -18,6 +19,25 @@ const binance = new Binance().options({
     useServerTime: true,
     recvWindow: 60000, // Set a higher recvWindow to increase response timeout
     verbose: true, // Add extra output when subscribing to WebSockets, etc
+    urls:{
+        fapi: fapi,
+        dapi: dapi,
+        base : 'https://api.binance.com/api/',
+        wapi : 'https://api.binance.com/wapi/',
+        sapi : 'https://api.binance.com/sapi/',
+        fapiTest : 'https://testnet.binancefuture.com/fapi/',
+        dapiTest : 'https://testnet.binancefuture.com/dapi/',
+        fstream : 'wss://fstream.binance.com/stream?streams=',
+        fstreamSingle : 'wss://fstream.binance.com/ws/',
+        fstreamSingleTest : 'wss://stream.binancefuture.com/ws/',
+        fstreamTest : 'wss://stream.binancefuture.com/stream?streams=',
+        dstream : 'wss://dstream.binance.com/stream?streams=',
+        dstreamSingle : 'wss://dstream.binance.com/ws/',
+        dstreamSingleTest : 'wss://dstream.binancefuture.com/ws/',
+        dstreamTest : 'wss://dstream.binancefuture.com/stream?streams=',
+        stream : 'wss://stream.binance.com:9443/ws/',
+        combineStream :'wss://stream.binance.com:9443/stream?streams='
+    },
     log: log => {
         console.log(log); // You can create your own logger here, or disable console output
     }
@@ -25,14 +45,34 @@ const binance = new Binance().options({
 
 let APIKEYTEST = CREDS['api_futures_testnet'];
 let APISECRETTEST = CREDS['secret_futures_testnet'];
-const BinanceTest = require('node-binance-api-testnet');
+let fapiTest = CREDS['fapi_testnet'];
+let dapiTest = CREDS['dapi_testnet'];
 
-const binanceTest = new BinanceTest().options({
+const binanceTest = new Binance().options({
     APIKEY: APIKEYTEST,
     APISECRET: APISECRETTEST,
     useServerTime: true,
     recvWindow: 60000, // Set a higher recvWindow to increase response timeout
     verbose: true, // Add extra output when subscribing to WebSockets, etc
+    urls:{
+        fapi: fapiTest,
+        dapi: dapiTest,
+        base : 'https://api.binance.com/api/',
+        wapi : 'https://api.binance.com/wapi/',
+        sapi : 'https://api.binance.com/sapi/',
+        fapiTest : 'https://testnet.binancefuture.com/fapi/',
+        dapiTest : 'https://testnet.binancefuture.com/dapi/',
+        fstream : 'wss://fstream.binance.com/stream?streams=',
+        fstreamSingle : 'wss://fstream.binance.com/ws/',
+        fstreamSingleTest : 'wss://stream.binancefuture.com/ws/',
+        fstreamTest : 'wss://stream.binancefuture.com/stream?streams=',
+        dstream : 'wss://dstream.binance.com/stream?streams=',
+        dstreamSingle : 'wss://dstream.binance.com/ws/',
+        dstreamSingleTest : 'wss://dstream.binancefuture.com/ws/',
+        dstreamTest : 'wss://dstream.binancefuture.com/stream?streams=',
+        stream : 'wss://stream.binance.com:9443/ws/',
+        combineStream :'wss://stream.binance.com:9443/stream?streams='
+    },
     log: log => {
         console.log(log); // You can create your own logger here, or disable console output
     }
